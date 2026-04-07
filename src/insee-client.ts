@@ -209,10 +209,11 @@ export function getBdmSeries(
     params.set("firstNObservations", String(opts.firstNObservations));
   if (opts.lastNObservations !== undefined)
     params.set("lastNObservations", String(opts.lastNObservations));
+  params.set("format", "jsondata");
   const qs = params.toString();
   const id = idbanks.join("+");
   return get(
-    `${BDM_BASE}/data/SERIES_BDM/${encodeURIComponent(id)}${qs ? "?" + qs : ""}`,
+    `${BDM_BASE}/data/SERIES_BDM/${encodeURIComponent(id)}?${qs}`,
     token,
     "application/vnd.sdmx.data+json;version=1.0.0",
   );
