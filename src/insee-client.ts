@@ -1,7 +1,7 @@
 import { XMLParser } from "fast-xml-parser";
 
 const SIRENE_BASE = "https://api.insee.fr/api-sirene/3.11";
-const META_BASE = "https://api.insee.fr/metadonnees/nomenclatures/v1";
+const META_BASE = "https://api.insee.fr/metadonnees/V1";
 const BDM_BASE = "https://api.insee.fr/series/BDM/V1";
 
 export class InseeApiError extends Error {
