@@ -13,8 +13,8 @@ export class InseeApiError extends Error {
   }
 }
 
-async function get(url: string, apiKey?: string): Promise<unknown> {
-  const headers: Record<string, string> = { Accept: "application/json" };
+async function get(url: string, apiKey?: string, accept = "application/json"): Promise<unknown> {
+  const headers: Record<string, string> = { Accept: accept };
   if (apiKey) headers["X-INSEE-Api-Key-Integration"] = apiKey;
 
   const response = await fetch(url, { headers });
@@ -205,5 +205,9 @@ export function getBdmSeries(
     params.set("lastNObservations", String(opts.lastNObservations));
   const qs = params.toString();
   const id = idbanks.join("+");
-  return get(`${BDM_BASE}/data/SERIES_BDM/${encodeURIComponent(id)}${qs ? "?" + qs : ""}`, token);
+  return get(
+    `${BDM_BASE}/data/SERIES_BDM/${encodeURIComponent(id)}${qs ? "?" + qs : ""}`,
+    token,
+    "application/vnd.sdmx.data+json;version=1.0.0",
+  );
 }
