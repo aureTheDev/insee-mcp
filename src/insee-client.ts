@@ -19,12 +19,18 @@ async function get(url: string, apiKey?: string, accept = "application/json"): P
 
   const response = await fetch(url, { headers });
 
+  const body = await response.text().catch(() => "");
+
   if (!response.ok) {
-    const body = await response.text().catch(() => "");
     throw new InseeApiError(response.status, url, body || response.statusText);
   }
 
-  return response.json();
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("xml") || body.trimStart().startsWith("<")) {
+    throw new InseeApiError(response.status, url, `API returned XML instead of JSON (check API key). Body: ${body.slice(0, 200)}`);
+  }
+
+  return JSON.parse(body);
 }
 
 // ── SIRENE ─────────────────────────────────────────────────────────────────
