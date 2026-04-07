@@ -1,3 +1,5 @@
+import { XMLParser } from "fast-xml-parser";
+
 const SIRENE_BASE = "https://api.insee.fr/api-sirene/3.11";
 const META_BASE = "https://api.insee.fr/metadonnees/nomenclatures/v1";
 const BDM_BASE = "https://api.insee.fr/series/BDM/V1";
@@ -197,7 +199,7 @@ export function listGeoRegions(token: string | undefined, date?: string) {
 
 // ── BDM ────────────────────────────────────────────────────────────────────
 
-export function getBdmSeries(
+export async function getBdmSeries(
   token: string | undefined,
   idbanks: string[],
   opts: { startPeriod?: string; endPeriod?: string; firstNObservations?: number; lastNObservations?: number },
@@ -209,12 +211,43 @@ export function getBdmSeries(
     params.set("firstNObservations", String(opts.firstNObservations));
   if (opts.lastNObservations !== undefined)
     params.set("lastNObservations", String(opts.lastNObservations));
-  params.set("format", "jsondata");
   const qs = params.toString();
   const id = idbanks.join("+");
-  return get(
-    `${BDM_BASE}/data/SERIES_BDM/${encodeURIComponent(id)}?${qs}`,
-    token,
-    "application/vnd.sdmx.data+json;version=1.0.0",
-  );
+  const url = `${BDM_BASE}/data/SERIES_BDM/${encodeURIComponent(id)}${qs ? "?" + qs : ""}`;
+
+  const headers: Record<string, string> = { Accept: "application/xml" };
+  if (token) headers["X-INSEE-Api-Key-Integration"] = token;
+  const response = await fetch(url, { headers });
+  const text = await response.text();
+  if (!response.ok) throw new InseeApiError(response.status, url, text.slice(0, 300));
+
+  const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@" });
+  const parsed = parser.parse(text);
+
+  // Extract Series array from DataSet (namespace-prefixed keys vary)
+  const root = parsed as Record<string, any>;
+  const dataSet = Object.values(root).flatMap((v: any) =>
+    v && typeof v === "object" ? Object.values(v).filter((x: any) => x && typeof x === "object" && ("Series" in x || "series" in x)) : []
+  )[0] as Record<string, any> | undefined;
+
+  const seriesRaw = dataSet?.["Series"] ?? dataSet?.["series"];
+  const seriesArray: any[] = !seriesRaw ? [] : Array.isArray(seriesRaw) ? seriesRaw : [seriesRaw];
+
+  const result = seriesArray.map((s: any) => {
+    const attrs: Record<string, string> = {};
+    for (const [k, v] of Object.entries(s)) {
+      if (k.startsWith("@")) attrs[k.slice(1)] = String(v);
+    }
+    const obsRaw = s["Obs"] ?? s["obs"];
+    const observations: Record<string, any>[] = !obsRaw ? [] : (Array.isArray(obsRaw) ? obsRaw : [obsRaw]).map((o: any) => {
+      const ob: Record<string, any> = {};
+      for (const [k, v] of Object.entries(o)) {
+        if (k.startsWith("@")) ob[k.slice(1)] = v;
+      }
+      return ob;
+    });
+    return { ...attrs, observations };
+  });
+
+  return result;
 }
