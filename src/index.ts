@@ -16,7 +16,7 @@ const getToken = async () => apiKey;
 
 const server = new McpServer({
   name: "insee-mcp",
-  version: "1.1.0",
+  version: "1.2.1",
 });
 
 registerSireneTools(server, getToken);

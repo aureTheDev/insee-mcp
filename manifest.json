@@ -2,8 +2,9 @@
   "manifest_version": "0.4",
   "name": "insee-mcp",
   "display_name": "INSEE MCP",
-  "version": "1.1.0",
-  "description": "APIs INSEE — annuaire SIRENE (entreprises & établissements) et métadonnées géographiques (COG/NAF). Clé API obligatoire.",
+  "version": "1.2.1",
+  "icon": "icon.png",
+  "description": "APIs INSEE — annuaire SIRENE (entreprises & établissements) et nomenclature NAF. Filtrage géographique par département intégré. Clé API obligatoire.",
   "author": {
     "name": "aureTheDev"
   },
@@ -19,17 +20,11 @@
     }
   },
   "tools": [
-    { "name": "sirene_search_establishments", "description": "Prospection sectorielle et géographique — recherche d'établissements (SIRET)" },
+    { "name": "sirene_search_establishments", "description": "Prospection sectorielle et géographique — recherche d'établissements avec filtre département intégré" },
     { "name": "sirene_get_siren",             "description": "Qualification prospect / enrichissement CRM par numéro SIREN" },
     { "name": "sirene_get_siret",             "description": "Détail d'un établissement : siège, adresse, effectifs" },
     { "name": "sirene_search_companies",      "description": "Recherche d'entreprises par nom ou secteur" },
-    { "name": "sirene_get_succession_links",  "description": "Suivi des rachats et transferts dans le portefeuille" },
-    { "name": "sirene_get_informations",      "description": "Monitoring de la santé de l'API SIRENE" },
-    { "name": "meta_get_naf_sous_classe",     "description": "Décodage d'un code APE (sous-classe NAF rev.2)" },
-    { "name": "meta_list_regions",            "description": "Découpage territorial — liste des régions françaises" },
-    { "name": "meta_list_departements",       "description": "Découpage territorial — liste des départements, filtrables par région" },
-    { "name": "meta_get_departement",         "description": "Validation et détail d'un département" },
-    { "name": "meta_get_region",              "description": "Validation et détail d'une région" }
+    { "name": "meta_get_naf_sous_classe",     "description": "Décodage d'un code APE (sous-classe NAF rev.2)" }
   ],
   "user_config": {
     "insee_api_key": {
