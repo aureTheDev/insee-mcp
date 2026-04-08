@@ -123,57 +123,8 @@ export function searchSiret(
   return get(`${SIRENE_BASE}/siret${qs ? "?" + qs : ""}`, token);
 }
 
-export function getSireneInformations(token: string | undefined) {
-  return get(`${SIRENE_BASE}/informations`, token);
-}
-
-export function getLiensSuivants(
-  token: string | undefined,
-  opts: {
-    q?: string;
-    tri?: "successeur";
-    nombre?: number;
-    debut?: number;
-    curseur?: string;
-  },
-) {
-  const params = new URLSearchParams();
-  if (opts.q) params.set("q", opts.q);
-  if (opts.tri) params.set("tri", opts.tri);
-  if (opts.nombre !== undefined) params.set("nombre", String(opts.nombre));
-  if (opts.debut !== undefined) params.set("debut", String(opts.debut));
-  if (opts.curseur) params.set("curseur", opts.curseur);
-  const qs = params.toString();
-  return get(`${SIRENE_BASE}/siret/liensSuccession${qs ? "?" + qs : ""}`, token);
-}
-
 // ── MÉTADONNÉES ────────────────────────────────────────────────────────────
 
 export function getNafSousClasse(token: string | undefined, code: string) {
   return get(`${META_BASE}/codes/nafr2/sousClasse/${encodeURIComponent(code)}`, token);
-}
-
-export function getGeoDepartement(token: string | undefined, code: string, date?: string) {
-  const params = date ? `?date=${encodeURIComponent(date)}` : "";
-  return get(`${META_BASE}/geo/departement/${encodeURIComponent(code)}${params}`, token);
-}
-
-export function getGeoRegion(token: string | undefined, code: string, date?: string) {
-  const params = date ? `?date=${encodeURIComponent(date)}` : "";
-  return get(`${META_BASE}/geo/region/${encodeURIComponent(code)}${params}`, token);
-}
-
-export function listGeoDepartements(token: string | undefined, codeRegion?: string, date?: string) {
-  // When filtering by region, use the sub-resource path to ensure the filter is applied correctly.
-  if (codeRegion) {
-    const params = date ? `?date=${encodeURIComponent(date)}` : "";
-    return get(`${META_BASE}/geo/region/${encodeURIComponent(codeRegion)}/departements${params}`, token);
-  }
-  const params = date ? `?date=${encodeURIComponent(date)}` : "";
-  return get(`${META_BASE}/geo/departements${params}`, token);
-}
-
-export function listGeoRegions(token: string | undefined, date?: string) {
-  const params = date ? `?date=${encodeURIComponent(date)}` : "";
-  return get(`${META_BASE}/geo/regions${params}`, token);
 }
