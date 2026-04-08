@@ -1,0 +1,48 @@
+{
+  "manifest_version": "0.4",
+  "name": "insee-mcp",
+  "display_name": "INSEE MCP",
+  "version": "1.0.0",
+  "description": "APIs INSEE — annuaire SIRENE, métadonnées géographiques (COG/NAF), séries macroéconomiques (BDM)",
+  "author": {
+    "name": "aureTheDev"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "INSEE_API_KEY": "${user_config.insee_api_key}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "sirene_get_siren",             "description": "Récupère les informations d'une entreprise par son numéro SIREN" },
+    { "name": "sirene_get_siret",             "description": "Récupère les informations d'un établissement par son numéro SIRET" },
+    { "name": "sirene_search_companies",      "description": "Recherche des entreprises dans le répertoire SIRENE" },
+    { "name": "sirene_search_establishments", "description": "Recherche des établissements dans le répertoire SIRENE" },
+    { "name": "sirene_get_informations",      "description": "Récupère les informations générales du répertoire SIRENE" },
+    { "name": "sirene_get_succession_links",  "description": "Récupère les liens de succession d'une entreprise" },
+    { "name": "meta_get_naf_classe",          "description": "Récupère les informations d'une classe NAF" },
+    { "name": "meta_get_naf_sous_classe",     "description": "Récupère les informations d'une sous-classe NAF" },
+    { "name": "meta_get_commune",             "description": "Récupère les informations d'une commune (COG)" },
+    { "name": "meta_get_departement",         "description": "Récupère les informations d'un département (COG)" },
+    { "name": "meta_get_region",              "description": "Récupère les informations d'une région (COG)" },
+    { "name": "meta_get_pays",                "description": "Récupère les informations d'un pays" },
+    { "name": "meta_list_communes",           "description": "Liste les communes d'un département" },
+    { "name": "meta_list_departements",       "description": "Liste les départements d'une région" },
+    { "name": "meta_list_regions",            "description": "Liste toutes les régions françaises" },
+    { "name": "bdm_get_series",               "description": "Récupère des séries temporelles macroéconomiques (BDM)" }
+  ],
+  "user_config": {
+    "insee_api_key": {
+      "type": "string",
+      "title": "Clé API INSEE",
+      "description": "Optionnelle — augmente les limites de débit. Obtenez une clé sur api.insee.fr",
+      "sensitive": true,
+      "required": false
+    }
+  }
+}
